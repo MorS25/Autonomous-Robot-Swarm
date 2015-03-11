@@ -10,13 +10,13 @@
 #define NODE_THREE            255
 
 /*  Functions To Control Motors, Must pass speed for individual Nodes
- *  Driveforward(int motorSpeed);
- *  DriveBackward(int motorSpeed);
- *  DriveLeft(int motorSpeed);
- *  DriveRight(int motorSpeed);
- *  RotateLeft(int motorSpeed);
- *  RotateRight(int motorSpeed);
- *  DriveStop(int motorSpeed);
+ *  Driveforward();
+ *  DriveBackward();
+ *  DriveLeft(;
+ *  DriveRight();
+ *  RotateLeft();
+ *  RotateRight();
+ *  DriveStop();
  *
  *  Motors are auto-initialized as well as pins on Arduino
  *  Parameter specifies universal NODE motor speed                    */
@@ -25,7 +25,10 @@ NodeSerial serial;
 
 typedef enum {
   WAITING_PC_CMD,
-  PC_CMD_PARSE
+  PC_CMD_PARSE,
+  NODE_CMD_CONFIRM,
+  NODE_CONFIRMED,
+  
 } NodeState;
 
 void setup() {
