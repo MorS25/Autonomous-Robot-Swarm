@@ -12,7 +12,7 @@
  *  RotateRight(int motorSpeed);
  *  DriveStop(int motorSpeed);
 */
-MotorControl motor;
+MotorControl motor;  //Motors are auto-initialized as well as pins on Arduino
 
 //Variables to set EXACT speed per Node
 #define NODE_ONE              150

@@ -12,10 +12,12 @@ MotorControl::MotorControl() {
   pinMode(MOTOR_FOUR_SET, OUTPUT);
 
   //Initialize all pins for motor encoders
+  /*
   pinMode(MOTOR_ONE_ENCODER, INPUT);
   pinMode(MOTOR_TWO_ENCODER, INPUT);
   pinMode(MOTOR_THREE_ENCODER, INPUT);
   pinMode(MOTOR_FOUR_ENCODER, INPUT);
+  */
 }
 
 void MotorControl::DriveForward(int motorSpeed) {
