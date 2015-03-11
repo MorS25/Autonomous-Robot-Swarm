@@ -3,6 +3,15 @@
 
 #include "MotorControl.h"
 
+/*  Functions To Control Motors, Must pass speed for individual Nodes
+ *  Driveforward(int motorSpeed);
+ *  DriveBackward(int motorSpeed);
+ *  DriveLeft(int motorSpeed);
+ *  DriveRight(int motorSpeed);
+ *  RotateLeft(int motorSpeed);
+ *  RotateRight(int motorSpeed);
+ *  DriveStop(int motorSpeed);
+*/
 MotorControl motor;
 
 //Variables to set EXACT speed per Node
@@ -25,29 +34,5 @@ void setup() {
 }
 
 void loop() {
-  motor.DriveStop();
-
-  uint8_t buf[VW_MAX_MESSAGE_LEN];
-  uint8_t buflen = VW_MAX_MESSAGE_LEN;
-
-  if (vw_get_message(buf, &buflen)) // Non-blocking
-  {
-    int i;
-
-    String a = String(buf[0], DEC);
-
-    if (a == "119")
-      motor.DriveForward(1);
-    else if (a == "115")
-      motor.DriveBackward(1);
-    else if (a == "97")
-      motor.DriveLeft(1);
-    else if (a == "100")
-      motor.DriveRight(1);
-
-    delay(1500);
-    motor.DriveStop();
-
-    digitalWrite(A5, LOW);
-  }
+  
 }
