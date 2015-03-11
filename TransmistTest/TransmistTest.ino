@@ -13,7 +13,7 @@ void setup()
   vw_set_rx_pin(receive_pin);
   vw_set_ptt_pin(transmit_en_pin);
   vw_set_ptt_inverted(true); // Required for DR3100
-  vw_setup(4000);	 // Bits per sec
+  vw_setup(8000);	 // Bits per sec
   
   pinMode(led_pin, OUTPUT);
 }
