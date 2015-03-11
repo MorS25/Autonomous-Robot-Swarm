@@ -3,6 +3,15 @@
 
 #include "MotorControl.h"
 
+//Variables to set EXACT speed per Node
+#define NODE_ONE              150
+#define NODE_TWO              255
+#define NODE_THREE            255
+
+//Initialize pins for Serial Communication
+#define RECIEVE_PIN           2
+#define TRANSMIT_PIN          3
+
 /*  Functions To Control Motors, Must pass speed for individual Nodes
  *  Driveforward(int motorSpeed);
  *  DriveBackward(int motorSpeed);
@@ -12,16 +21,8 @@
  *  RotateRight(int motorSpeed);
  *  DriveStop(int motorSpeed);
 */
-MotorControl motor;  //Motors are auto-initialized as well as pins on Arduino
-
-//Variables to set EXACT speed per Node
-#define NODE_ONE              150
-#define NODE_TWO              255
-#define NODE_THREE            255
-
-//Initialize pins for Serial Communication
-#define RECIEVE_PIN           2
-#define TRANSMIT_PIN          3
+MotorControl motor(NODE_ONE);  //Motors are auto-initialized as well as pins on Arduino
+                               //Parameter specifies universal NODE motor speed
 
 void setup() {
   //Initialize all pins for Serial Communications

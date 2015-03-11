@@ -25,14 +25,17 @@
 
 class MotorControl {
   public:
-    MotorControl();
-    void DriveForward(int motorSpeed);
-    void DriveBackward(int motorSpeed);
-    void DriveLeft(int motorSpeed);
-    void DriveRight(int motorSpeed);
-    void RotateLeft(int motorSpeed);
-    void RotateRight(int motorSpeed);
+    MotorControl(int MOTOR_SPEED);
+    void DriveForward();
+    void DriveBackward();
+    void DriveLeft();
+    void DriveRight();
+    void RotateLeft();
+    void RotateRight();
     void DriveStop();
+    
+    //Varialble to control MOTOR SPEED
+    int motorSpeed;
 };
 
 #endif
