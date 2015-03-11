@@ -22,7 +22,7 @@
  *  DriveStop(int motorSpeed);
  *
  *  Motors are auto-initialized as well as pins on Arduino
- *  Parameter specifies universal NODE motor speed            */
+ *  Parameter specifies universal NODE motor speed                    */
 MotorControl motor(NODE_ONE);
 
 typedef enum{
