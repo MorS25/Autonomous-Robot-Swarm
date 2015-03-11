@@ -1,6 +1,8 @@
 #ifndef NodeSerial_h
 #define NodeSerial_h
 
+#include <VirtualWire.h>
+
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -17,6 +19,8 @@
 class NodeSerial {
   public:
     NodeSerial();
+  private:
+    ;
 };
 
 #endif

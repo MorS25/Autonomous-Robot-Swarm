@@ -2,6 +2,7 @@
 #include <VirtualWire.h>
 
 #include "MotorControl.h"
+#include "NodeSerial.h"
 
 //Variables to set EXACT speed per Node
 #define NODE_ONE              245
@@ -20,6 +21,7 @@
  *  Motors are auto-initialized as well as pins on Arduino
  *  Parameter specifies universal NODE motor speed                    */
 MotorControl motor(NODE_ONE);
+NodeSerial serial;
 
 typedef enum {
   WAITING_PC_CMD,
@@ -27,7 +29,7 @@ typedef enum {
 } NodeState;
 
 void setup() {
-  ;
+  
 }
 
 void loop() {
