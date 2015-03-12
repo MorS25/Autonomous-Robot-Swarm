@@ -33,7 +33,8 @@ class MotorControl {
     void RotateLeft();
     void RotateRight();
     void DriveStop();
-    
+
+  private:
     //Varialble to control MOTOR SPEED
     int motorSpeed;
 };

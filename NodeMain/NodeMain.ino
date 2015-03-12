@@ -12,7 +12,7 @@
 
 //DATATYPES
 typedef enum {
-  WAITING_PC_CMD,
+  WAITING_PC_CMD = -9,
   PC_CMD_PARSE,
   NODE_CMD_CONFIRM,
   NODE_CONFIRMED,
@@ -21,6 +21,12 @@ typedef enum {
   DESTINATION_TO_ORIGIN,
   DATA_TO_PC
 } NodeState;
+
+typedef struct {
+  NodeState nodeState;
+  int originCoord;
+  int destinationCoord;
+} NodeData;
 
 //VARIABLES & OBJECTS
 /*  Functions To Control Motors, Must pass speed for individual Nodes
@@ -35,22 +41,20 @@ typedef enum {
  *  Motors are auto-initialized as well as pins on Arduino
  *  Parameter specifies universal NODE motor speed                    */
 MotorControl motor(NODE_ONE);
-NodeSerial serial;
 
-typedef struct{
-  static NodeState nodeState;
-  static int originCoord;
-  static int destinationCoord;
-}NodeData;
+//Initializes node Serial communication
+NodeSerial serial;
+//Declaration of NodeData
+NodeData nodeData;
 
 void setup() {
-  NodeData nodeOne = {WAITING_PC_CMD, 0, 0};
+  //Initialize all Node Data variables
+  nodeData.nodeState = WAITING_PC_CMD;
+  nodeData.originCoord = 0;
+  nodeData.destinationCoord = 0;
 }
 
 void loop() {
-  Serial.println(nodeOne.nodeState);
+  Serial.println(nodeData.nodeState);
   motor.DriveForward();
-  delay(10000);
-  motor.RotateLeft();
-  delay(11700);
 }
