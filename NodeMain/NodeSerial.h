@@ -18,7 +18,7 @@
 
 class NodeSerial {
   public:
-    NodeSerial();
+    NodeSerial(void);
   private:
     ;
 };

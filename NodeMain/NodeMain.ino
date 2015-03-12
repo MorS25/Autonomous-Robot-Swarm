@@ -47,14 +47,14 @@ NodeSerial serial;
 //Declaration of NodeData
 NodeData nodeData;
 
-void setup() {
+void setup(void) {
   //Initialize all Node Data variables
   nodeData.nodeState = WAITING_PC_CMD;
   nodeData.originCoord = 0;
   nodeData.destinationCoord = 0;
 }
 
-void loop() {
+void loop(void) {
   Serial.println(nodeData.nodeState);
   motor.DriveForward();
 }

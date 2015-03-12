@@ -22,7 +22,7 @@ MotorControl::MotorControl(int MOTOR_SPEED) {
   motorSpeed = MOTOR_SPEED;
 }
 
-void MotorControl::DriveForward() {
+void MotorControl::DriveForward(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, HIGH);
   analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
@@ -32,7 +32,7 @@ void MotorControl::DriveForward() {
   analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
   digitalWrite(MOTOR_FOUR_SET, HIGH);
 }
-void MotorControl::DriveBackward() {
+void MotorControl::DriveBackward(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, LOW);
   analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
@@ -42,7 +42,7 @@ void MotorControl::DriveBackward() {
   analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
   digitalWrite(MOTOR_FOUR_SET, LOW);
 }
-void MotorControl::DriveLeft() {
+void MotorControl::DriveLeft(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, LOW);
   analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
@@ -52,7 +52,7 @@ void MotorControl::DriveLeft() {
   analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
   digitalWrite(MOTOR_FOUR_SET, HIGH);
 }
-void MotorControl::DriveRight() {
+void MotorControl::DriveRight(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, HIGH);
   analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
@@ -62,7 +62,7 @@ void MotorControl::DriveRight() {
   analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
   digitalWrite(MOTOR_FOUR_SET, LOW);
 }
-void MotorControl::RotateLeft() {
+void MotorControl::RotateLeft(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, LOW);
   analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
@@ -72,7 +72,7 @@ void MotorControl::RotateLeft() {
   analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
   digitalWrite(MOTOR_FOUR_SET, LOW);
 }
-void MotorControl::RotateRight() {
+void MotorControl::RotateRight(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, HIGH);
   analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
@@ -82,7 +82,7 @@ void MotorControl::RotateRight() {
   analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
   digitalWrite(MOTOR_FOUR_SET, HIGH);
 }
-void MotorControl::DriveStop() {
+void MotorControl::DriveStop(void) {
   digitalWrite(MOTOR_ONE_ENABLE, LOW);
   digitalWrite(MOTOR_ONE_SET, LOW);
   digitalWrite(MOTOR_TWO_ENABLE, LOW);

@@ -5,7 +5,7 @@ const int transmit_pin = A0;
 const int receive_pin = 2;
 const int transmit_en_pin = 3;
 
-void setup()
+void setup(void)
 {
   Serial.begin(115200);
   // Initialise the IO and ISR
@@ -18,7 +18,7 @@ void setup()
   pinMode(led_pin, OUTPUT);
 }
 
-void loop()
+void loop(void)
 {  
   while (Serial.available() < 1)
     ;

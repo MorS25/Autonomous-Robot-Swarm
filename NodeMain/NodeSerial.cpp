@@ -1,6 +1,6 @@
 #include "NodeSerial.h"
 
-NodeSerial::NodeSerial() {
+NodeSerial::NodeSerial(void) {
   Serial.begin(115200);
   vw_set_tx_pin(TRANSMIT_PIN);
   vw_set_rx_pin(RECIEVE_PIN);
