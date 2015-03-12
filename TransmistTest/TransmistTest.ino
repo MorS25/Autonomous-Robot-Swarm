@@ -20,7 +20,7 @@ void setup(void)
 
 void loop(void)
 {  
-  while (Serial.available() < 1)
+  while (Serial.available() == 0)
     ;
   
   char a[] = {Serial.read()};

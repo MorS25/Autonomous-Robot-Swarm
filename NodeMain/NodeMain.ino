@@ -1,3 +1,4 @@
+#include <Adafruit_GPS.h>
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
 
@@ -32,7 +33,7 @@ typedef struct {
 /*  Functions To Control Motors, Must pass speed for individual Nodes
  *  Driveforward();
  *  DriveBackward();
- *  DriveLeft(;
+ *  DriveLeft();
  *  DriveRight();
  *  RotateLeft();
  *  RotateRight();
@@ -47,7 +48,11 @@ NodeSerial serial;
 //Declaration of NodeData
 NodeData nodeData;
 
+GPSModule GPS;
+
 void setup(void) {
+  Serial.begin(115200);
+  
   //Initialize all Node Data variables
   nodeData.nodeState = WAITING_PC_CMD;
   nodeData.originCoord = 0;
@@ -55,6 +60,22 @@ void setup(void) {
 }
 
 void loop(void) {
-  Serial.println(nodeData.nodeState);
-  motor.DriveForward();
+  uint8_t buf[VW_MAX_MESSAGE_LEN];
+  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
+  if (vw_get_message(buf, &buflen)) // Non-blocking
+  {
+    int i;
+    // Message with a good checksum received, print it.
+    Serial.print("Got: ");
+
+    for (i = 0; i < buflen; i++)
+    {
+      String a = String(buf[i], DEC);
+      Serial.print(buf[i], HEX);
+      Serial.print(' ');
+      Serial.print(a);
+    }
+    Serial.println();
+  }
 }

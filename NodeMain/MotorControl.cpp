@@ -18,7 +18,7 @@ MotorControl::MotorControl(int MOTOR_SPEED) {
   pinMode(MOTOR_THREE_ENCODER, INPUT);
   pinMode(MOTOR_FOUR_ENCODER, INPUT);
   */
-  
+
   motorSpeed = MOTOR_SPEED;
 }
 
