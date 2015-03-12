@@ -31,3 +31,6 @@ Overview:
 	-Left Rotation / Right Rotation												
 	-Left Upward / Right Backward Diagonal											
 	-Right Upward / Left Backward Diagonal											
+
+### MotorControl.h
+	Due to unequal omni wheels, exact placement of wheels, and friction, each NODE needs its own specialized SET speed.  This is so what all four omni-wheels may rotate at the same speed.  Also used so that encoders all read data at equal rates.
