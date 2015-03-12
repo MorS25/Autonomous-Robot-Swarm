@@ -4,11 +4,25 @@
 #include "MotorControl.h"
 #include "NodeSerial.h"
 
-//Variables to set EXACT speed per Node
+//PREPROCESSOR
+//Define individual node speeds
 #define NODE_ONE              245
 #define NODE_TWO              255
 #define NODE_THREE            255
 
+//DATATYPES
+typedef enum {
+  WAITING_PC_CMD,
+  PC_CMD_PARSE,
+  NODE_CMD_CONFIRM,
+  NODE_CONFIRMED,
+  ORIGIN_TO_DESTINATION,
+  COLLECT_DATA,
+  DESTINATION_TO_ORIGIN,
+  DATA_TO_PC
+} NodeState;
+
+//VARIABLES & OBJECTS
 /*  Functions To Control Motors, Must pass speed for individual Nodes
  *  Driveforward();
  *  DriveBackward();
@@ -23,19 +37,18 @@
 MotorControl motor(NODE_ONE);
 NodeSerial serial;
 
-typedef enum {
-  WAITING_PC_CMD,
-  PC_CMD_PARSE,
-  NODE_CMD_CONFIRM,
-  NODE_CONFIRMED,
-  
-} NodeState;
+typedef struct{
+  static NodeState nodeState;
+  static int originCoord;
+  static int destinationCoord;
+}NodeData;
 
 void setup() {
-  
+  NodeData nodeOne = {WAITING_PC_CMD, 0, 0};
 }
 
 void loop() {
+  Serial.println(nodeOne.nodeState);
   motor.DriveForward();
   delay(10000);
   motor.RotateLeft();
