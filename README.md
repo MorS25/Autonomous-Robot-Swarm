@@ -31,3 +31,4 @@ Movement:																Each node has FIVE axis on which it may move.
 	-Left Rotation / Right Rotation												
 	-Left Upward / Right Backward Diagonal											
 	-Right Upward / Left Backward Diagonal											
+
