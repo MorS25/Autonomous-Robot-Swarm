@@ -3,7 +3,7 @@ Author: Avi Varshney
 Created: March 08, 2015
 Time: 3:03 AM
 
-Overview:
+Overview:															
 	The end goal of this project is to have a a set of autonomous robots that act as one group (swarm).  Each robot will be able to communicate with one another, via RF Modules.  Each robot (node), will be equipped with a variety of sensors that allow it to collect environmental data.  
   
 # Features( Per Node ):														
@@ -32,5 +32,5 @@ Overview:
 	-Left Upward / Right Backward Diagonal											
 	-Right Upward / Left Backward Diagonal											
 
-### MotorControl.h
+MotorControl.h														
 	Due to unequal omni wheels, exact placement of wheels, and friction, each NODE needs its own specialized SET speed.  This is so what all four omni-wheels may rotate at the same speed.  Also used so that encoders all read data at equal rates.
