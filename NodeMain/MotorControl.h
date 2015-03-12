@@ -35,7 +35,7 @@ class MotorControl {
     void DriveStop();
 
   private:
-    //Varialble to control MOTOR SPEED
+    //Variable to control MOTOR SPEED
     int motorSpeed;
 };
 
