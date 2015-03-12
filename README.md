@@ -8,9 +8,9 @@ Overview:
 
 ##### NOTES															
 ###### MotorControl.h														
-	Due to unequal omni wheels, exact placement of wheels, and friction, each NODE needs its own specialized SET
-	speed. This is so what all four omni-wheels may rotate at the same speed.  Also used so that encoders all
-	read data at equal rates.
+	Due to unequal omni wheels, exact placement of wheels, and friction, each NODE needs its own
+	specialized SET speed. This is so that all four omni-wheels may rotate at the same speed.  
+	Also used so that encoders all read data at equal rates.
   
 ## Features( Per Node ):														
   -Arduino 328p Microcontroller													
