@@ -1,5 +1,7 @@
 #include "GPSModule.h"
 
+Adafruit_GPS GPS(&Serial);
+
 GPSModule::GPSModule() {
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);

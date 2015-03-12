@@ -12,15 +12,12 @@
 
 #define GPSECHO false
 
-Adafruit_GPS GPS(&Serial);
-
-boolean usingInterrupt = false;
-
 class GPSModule {
   public:
     GPSModule();
     void GetData(void);
   private:
+    boolean usingInterrupt = false;
     uint32_t timer = millis();
 };
 

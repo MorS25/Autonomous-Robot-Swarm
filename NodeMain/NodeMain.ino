@@ -2,6 +2,7 @@
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
 
+#include "GPSModule.h"
 #include "MotorControl.h"
 #include "NodeSerial.h"
 
@@ -25,41 +26,34 @@ typedef enum {
 
 typedef struct {
   NodeState nodeState;
-  int originCoord;
-  int destinationCoord;
+  float gpsLat;
+  float gpsLong;
 } NodeData;
 
 //VARIABLES & OBJECTS
-/*  Functions To Control Motors, Must pass speed for individual Nodes
- *  Driveforward();
- *  DriveBackward();
- *  DriveLeft();
- *  DriveRight();
- *  RotateLeft();
- *  RotateRight();
- *  DriveStop();
- *
- *  Motors are auto-initialized as well as pins on Arduino
+/*  Motors are auto-initialized as well as pins on Arduino
  *  Parameter specifies universal NODE motor speed                    */
 MotorControl motor(NODE_ONE);
-
 //Initializes node Serial communication
 NodeSerial serial;
 //Declaration of NodeData
 NodeData nodeData;
-
-GPSModule GPS;
+//
+GPSModule gpsModule;
 
 void setup(void) {
   Serial.begin(115200);
-  
+
   //Initialize all Node Data variables
   nodeData.nodeState = WAITING_PC_CMD;
-  nodeData.originCoord = 0;
-  nodeData.destinationCoord = 0;
+  nodeData.gpsLat = 0;
+  nodeData.gpsLong = 0;
 }
 
 void loop(void) {
+  gpsModule.GetData();
+  
+  /*
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
@@ -78,4 +72,5 @@ void loop(void) {
     }
     Serial.println();
   }
+  */
 }
