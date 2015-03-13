@@ -1,16 +1,26 @@
-#include <Adafruit_GPS.h>
-#include <SoftwareSerial.h>
-#include <VirtualWire.h>
-
-#include "GPSModule.h"
-#include "MotorControl.h"
-#include "NodeSerial.h"
-
 //PREPROCESSOR
+//Initialize PIN VALS for Motor Control
+#define MOTOR_ONE_ENABLE      6
+#define MOTOR_ONE_SET         8
+#define MOTOR_TWO_ENABLE      5
+#define MOTOR_TWO_SET         7
+#define MOTOR_THREE_ENABLE    10
+#define MOTOR_THREE_SET       12
+#define MOTOR_FOUR_ENABLE     11
+#define MOTOR_FOUR_SET        13
+
+//Initialize PIN VALS for motor encoders
+#define MOTOR_ONE_ENCODER     A0
+#define MOTOR_TWO_ENCODER     A1
+#define MOTOR_THREE_ENCODER   A2
+#define MOTOR_FOUR_ENCODER    A3
+
 //Define individual node speeds
 #define NODE_ONE              245
 #define NODE_TWO              255
 #define NODE_THREE            255
+
+#define motorSpeed  NODE_ONE
 
 //DATATYPES
 typedef enum {
@@ -29,50 +39,88 @@ typedef struct {
   float gpsLat;
   float gpsLong;
 } NodeData;
-
-//VARIABLES & OBJECTS
-/*  Motors are auto-initialized as well as pins on Arduino
- *  Parameter specifies universal NODE motor speed                    */
-MotorControl motor(NODE_ONE);
-//Initializes node Serial communication
-NodeSerial serial;
-//Declaration of NodeData
 NodeData nodeData;
-//
-GPSModule gpsModule;
 
 void setup(void) {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   //Initialize all Node Data variables
   nodeData.nodeState = WAITING_PC_CMD;
   nodeData.gpsLat = 0;
   nodeData.gpsLong = 0;
-  
-  delay(1000);
 }
 
 void loop(void) {
-  gpsModule.GetData();
-  delay(30000);
-  /*
-  uint8_t buf[VW_MAX_MESSAGE_LEN];
-  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+  DriveForward();
+}
 
-  if (vw_get_message(buf, &buflen)) // Non-blocking
-  {
-    int i;
-    // Message with a good checksum received, print it.
-    Serial.print("Got: ");
-
-    for (i = 0; i < buflen; i++)
-    {
-      String a = String(buf[i], DEC);
-      Serial.print(buf[i], HEX);
-      Serial.print(' ');
-      Serial.print(a);
-    }
-    Serial.println();
-  }
-  */
+void DriveForward(void) {
+  analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_ONE_SET, HIGH);
+  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_TWO_SET, HIGH);
+  analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_THREE_SET, HIGH);
+  analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_FOUR_SET, HIGH);
+}
+void DriveBackward(void) {
+  analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_ONE_SET, LOW);
+  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_TWO_SET, LOW);
+  analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_THREE_SET, LOW);
+  analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_FOUR_SET, LOW);
+}
+void DriveLeft(void) {
+  analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_ONE_SET, LOW);
+  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_TWO_SET, HIGH);
+  analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_THREE_SET, LOW);
+  analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_FOUR_SET, HIGH);
+}
+void DriveRight(void) {
+  analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_ONE_SET, HIGH);
+  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_TWO_SET, LOW);
+  analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_THREE_SET, HIGH);
+  analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_FOUR_SET, LOW);
+}
+void RotateLeft(void) {
+  analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_ONE_SET, LOW);
+  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_TWO_SET, HIGH);
+  analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_THREE_SET, HIGH);
+  analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_FOUR_SET, LOW);
+}
+void RotateRight(void) {
+  analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_ONE_SET, HIGH);
+  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_TWO_SET, LOW);
+  analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_THREE_SET, LOW);
+  analogWrite(MOTOR_FOUR_ENABLE, motorSpeed);
+  digitalWrite(MOTOR_FOUR_SET, HIGH);
+}
+void DriveStop(void) {
+  digitalWrite(MOTOR_ONE_ENABLE, LOW);
+  digitalWrite(MOTOR_ONE_SET, LOW);
+  digitalWrite(MOTOR_TWO_ENABLE, LOW);
+  digitalWrite(MOTOR_TWO_SET, LOW);
+  digitalWrite(MOTOR_THREE_ENABLE, LOW);
+  digitalWrite(MOTOR_THREE_SET, LOW);
+  digitalWrite(MOTOR_FOUR_ENABLE, LOW);
+  digitalWrite(MOTOR_FOUR_SET, LOW);
 }
