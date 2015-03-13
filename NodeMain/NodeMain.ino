@@ -42,17 +42,19 @@ NodeData nodeData;
 GPSModule gpsModule;
 
 void setup(void) {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   //Initialize all Node Data variables
   nodeData.nodeState = WAITING_PC_CMD;
   nodeData.gpsLat = 0;
   nodeData.gpsLong = 0;
+  
+  delay(1000);
 }
 
 void loop(void) {
   gpsModule.GetData();
-  
+  delay(30000);
   /*
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
