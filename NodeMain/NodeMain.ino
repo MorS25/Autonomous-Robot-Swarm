@@ -42,5 +42,5 @@ void setup(void) {
 }
 
 void loop(void) {
-  motor.DriveRight();
+  ;
 }
