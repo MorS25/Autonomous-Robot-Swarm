@@ -4,7 +4,12 @@
 #define RECEIVE_PIN          A1
 #define TRANSMIT_ENABLE_PIN  3
 
-byte input;
+bool startOfData = false;
+bool endOfData = false;
+
+char input;
+char dataToSend[20];
+int index = 0;
 
 void setup(void)
 {
@@ -19,14 +24,38 @@ void setup(void)
 
 void loop(void)
 {
-  if (Serial.available()) {
+  while (Serial.available()) {
     input = Serial.read();
-    Serial.write(input);
-  }
+
+    if (input == '[') {
+      dataToSend[index++] = input;
+      startOfData = true;
+    }
+    if (input == ']' && startOfData) {
+      dataToSend[index++] = input;
+      endOfData = true;
+    }
+    if (startOfData && !endOfData && input != '[' && input != ']' ) {
+      dataToSend[index++] = input;
+    }
+
+    //Send Data Over
+    if (startOfData && endOfData) {
+      //Reset
+      startOfData = false;
+      endOfData = false;
+      index = 0;
+
+      //Send Data
+      vw_send((uint8_t *)dataToSend, strlen(dataToSend));
+      vw_wait_tx();
+      
+      //Printing for debugging
+      Serial.println(dataToSend);
+
+      //Reset Data Array
+      for (int i = 0; i < strlen(dataToSend); dataToSend[i++] = 0)
+        ;
+    }
+  } //End of outer if-statement
 }
-
-
-/*
-vw_send((uint8_t *)a, strlen(a));
-vw_wait_tx(); // Wait until the whole message is gone
-*/
