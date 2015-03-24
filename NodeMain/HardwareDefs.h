@@ -4,6 +4,7 @@
 //Initialize Pins for RF Modules
 #define RECEIVE_PIN           2
 #define TRANSMIT_PIN          3
+#define TRANSMIT_ENABLE_PIN   A0
 
 //DATATYPES
 typedef enum {

@@ -16,9 +16,7 @@ Motor::Motor(int SPEED){
 void Motor::DriveForward(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, HIGH);
-  
   MOTOR_TWO_RUN(motorSpeed);
-  
   digitalWrite(MOTOR_TWO_SET, HIGH);
   analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_THREE_SET, HIGH);

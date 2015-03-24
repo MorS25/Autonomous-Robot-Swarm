@@ -18,8 +18,6 @@ uint8_t buflen = VW_MAX_MESSAGE_LEN;
   void DriveBackward(void);
   void DriveLeft(void);
   void DriveRight(void);
-  void RotateLeft(void);
-  void RotateRight(void);
   void DriveStop(void);
 */
 Motor motor(NODE_ONE);
@@ -33,10 +31,10 @@ void setup(void) {
   Serial.begin(9600);
 
   //Initialize pins for serial communication
-  vw_set_tx_pin(3);
-  vw_set_rx_pin(2);
-  vw_set_ptt_pin(4);
-  vw_set_ptt_inverted(true);
+  vw_set_tx_pin(TRANSMIT_PIN);
+  vw_set_rx_pin(RECEIVE_PIN);
+  vw_set_ptt_pin(TRANSMIT_ENABLE_PIN);
+  vw_set_ptt_inverted(false);
   vw_setup(4000);
   vw_rx_start();
 
@@ -50,6 +48,8 @@ void setup(void) {
 }
 
 void loop(void) {
+  
+  /*
   switch (nodeData.nodeState) {
     case PC_DATA_PARSE:
       motor.DriveForward();
@@ -73,6 +73,9 @@ void loop(void) {
     case NODE_DATA_TO_PC:
       break;
   }
+  */
+  motor.DriveForward();
+  
 }
 
 void ParseData(void) {

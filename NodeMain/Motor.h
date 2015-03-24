@@ -25,7 +25,7 @@
     else                                          \
       analogWrite(MOTOR_TWO_ENABLE, motorSpeed);  \
   } while(0)
-
+  
 class Motor {
   public:
     Motor(int SPEED);
@@ -33,13 +33,12 @@ class Motor {
     void DriveBackward(void);
     void DriveLeft(void);
     void DriveRight(void);
-    void RotateLeft(void);
-    void RotateRight(void);
     void DriveStop(void);
 
   private:
     int motorSpeed;
-
+    void RotateLeft(void);
+    void RotateRight(void);
 };
 
 #endif
