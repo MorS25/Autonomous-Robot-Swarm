@@ -19,6 +19,13 @@
 #define MOTOR_THREE_ENCODER   A2
 #define MOTOR_FOUR_ENCODER    A3
 
+#define MOTOR_TWO_RUN(x) do {                     \
+    if(x < 255)                                   \
+      digitalWrite(MOTOR_TWO_ENABLE, HIGH);       \
+    else                                          \
+      analogWrite(MOTOR_TWO_ENABLE, motorSpeed);  \
+  } while(0)
+
 class Motor {
   public:
     Motor(int SPEED);
@@ -29,7 +36,7 @@ class Motor {
     void RotateLeft(void);
     void RotateRight(void);
     void DriveStop(void);
-    
+
   private:
     int motorSpeed;
 

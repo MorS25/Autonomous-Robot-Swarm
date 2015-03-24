@@ -1,9 +1,7 @@
 #include <VirtualWire.h>
-#include "Motor.h"
 
-//PREPROCESSOR
-//Initialize Pins for RF Modules
-#define RECEIVE_PIN           2
+#include "HardwareDefs.h"
+#include "Motor.h"
 
 //Define individual node speeds
 #define NODE_ONE              255
@@ -26,28 +24,15 @@ uint8_t buflen = VW_MAX_MESSAGE_LEN;
 */
 Motor motor(NODE_ONE);
 
-//DATATYPES
-typedef enum {
-  WAITING_PC_DATA,
-  DATA_PARSE,
-  NODE_DATA_CONFIRM,
-  NODE_DATA_SET,
-  ORIGIN_TO_DESTINATION,
-  COLLECT_DATA,
-  DESTINATION_TO_ORIGIN,
-  NODE_DATA_TO_PC
-} NodeState;
-
-typedef struct {
-  NodeState nodeState;
-  float gpsLat;
-  float gpsLong;
-} NodeData;
 NodeData nodeData;
+
+//Function Prototypes
+void ParseData(void);
 
 void setup(void) {
   Serial.begin(9600);
 
+  //Initialize pins for serial communication
   vw_set_tx_pin(3);
   vw_set_rx_pin(2);
   vw_set_ptt_pin(4);
@@ -56,7 +41,7 @@ void setup(void) {
   vw_rx_start();
 
   //Initialize all Node Data variable
-  nodeData.nodeState = WAITING_PC_DATA;
+  nodeData.nodeState = PC_DATA_PARSE;
   nodeData.gpsLat = 0;
   nodeData.gpsLong = 0;
 
@@ -66,18 +51,8 @@ void setup(void) {
 
 void loop(void) {
   switch (nodeData.nodeState) {
-    case WAITING_PC_DATA_START:
-      if (vw_get_message(buf, &buflen))
-        ;
-      break;
-
-    case WAITING_PC_DATA:
-      break;
-
-    case WAITING_PC_DATA_END:
-      break;
-
-    case DATA_PARSE:
+    case PC_DATA_PARSE:
+      motor.DriveForward();
       break;
 
     case NODE_DATA_CONFIRM:
@@ -98,8 +73,9 @@ void loop(void) {
     case NODE_DATA_TO_PC:
       break;
   }
+}
 
-void ParseData(){
+void ParseData(void) {
   if (vw_get_message(buf, &buflen)) // Non-blocking
   {
     for (int i = 0; i < buflen; i++)
