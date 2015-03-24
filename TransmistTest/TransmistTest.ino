@@ -1,33 +1,32 @@
 #include <VirtualWire.h>
 
-const int led_pin = A1;
-const int transmit_pin = A0;
-const int receive_pin = 2;
-const int transmit_en_pin = 3;
+#define TRANSMIT_PIN         A0
+#define RECEIVE_PIN          A1
+#define TRANSMIT_ENABLE_PIN  3
+
+byte input;
 
 void setup(void)
 {
-  Serial.begin(115200);
-  // Initialise the IO and ISR
-  vw_set_tx_pin(transmit_pin);
-  vw_set_rx_pin(receive_pin);
-  vw_set_ptt_pin(transmit_en_pin);
-  vw_set_ptt_inverted(true); // Required for DR3100
-  vw_setup(4000);	 // Bits per sec
-  
-  pinMode(led_pin, OUTPUT);
+  Serial.begin(9600);
+
+  vw_set_tx_pin(TRANSMIT_PIN);
+  vw_set_rx_pin(RECEIVE_PIN);
+  vw_set_ptt_pin(TRANSMIT_ENABLE_PIN);
+  vw_set_ptt_inverted(true);
+  vw_setup(4000);
 }
 
 void loop(void)
-{  
-  while (Serial.available() < 1)
-    ;
-  
-  char a[] = {Serial.read()};
-  Serial.println(a);
-  digitalWrite(led_pin, HIGH); // Flash a light to show transmitting
-  vw_send((uint8_t *)a, strlen(a));
-  vw_wait_tx(); // Wait until the whole message is gone
-  digitalWrite(led_pin, LOW);
+{
+  if (Serial.available()) {
+    input = Serial.read();
+    Serial.write(input);
+  }
 }
 
+
+/*
+vw_send((uint8_t *)a, strlen(a));
+vw_wait_tx(); // Wait until the whole message is gone
+*/
