@@ -82,7 +82,5 @@ void ParseData(void) {
       Serial.print(' ');
     }
     Serial.println();
-
-
   }
 }
