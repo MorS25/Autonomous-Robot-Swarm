@@ -27,7 +27,7 @@ void Motor::DriveForward(void) {
 void Motor::DriveBackward(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, LOW);
-  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  MOTOR_TWO_RUN(motorSpeed);
   digitalWrite(MOTOR_TWO_SET, LOW);
   analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_THREE_SET, LOW);
@@ -38,7 +38,7 @@ void Motor::DriveBackward(void) {
 void Motor::DriveLeft(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, LOW);
-  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  MOTOR_TWO_RUN(motorSpeed);
   digitalWrite(MOTOR_TWO_SET, HIGH);
   analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_THREE_SET, LOW);
@@ -49,7 +49,7 @@ void Motor::DriveLeft(void) {
 void Motor::DriveRight(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, HIGH);
-  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  MOTOR_TWO_RUN(motorSpeed);
   digitalWrite(MOTOR_TWO_SET, LOW);
   analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_THREE_SET, HIGH);
@@ -60,7 +60,7 @@ void Motor::DriveRight(void) {
 void Motor::RotateLeft(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, LOW);
-  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  MOTOR_TWO_RUN(motorSpeed);
   digitalWrite(MOTOR_TWO_SET, HIGH);
   analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_THREE_SET, HIGH);
@@ -71,7 +71,7 @@ void Motor::RotateLeft(void) {
 void Motor::RotateRight(void) {
   analogWrite(MOTOR_ONE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_ONE_SET, HIGH);
-  analogWrite(MOTOR_TWO_ENABLE, motorSpeed);
+  MOTOR_TWO_RUN(motorSpeed);
   digitalWrite(MOTOR_TWO_SET, LOW);
   analogWrite(MOTOR_THREE_ENABLE, motorSpeed);
   digitalWrite(MOTOR_THREE_SET, LOW);

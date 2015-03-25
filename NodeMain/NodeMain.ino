@@ -8,10 +8,6 @@
 #define NODE_TWO              255
 #define NODE_THREE            255
 
-//Variables for capturing Serial Data
-uint8_t buf[VW_MAX_MESSAGE_LEN];
-uint8_t buflen = VW_MAX_MESSAGE_LEN;
-
 //Initialize all motors
 /*
   void DriveForward(void);
@@ -48,11 +44,10 @@ void setup(void) {
 }
 
 void loop(void) {
-  
-  /*
   switch (nodeData.nodeState) {
     case PC_DATA_PARSE:
-      motor.DriveForward();
+      motor.DriveStop();
+      ParseData();
       break;
 
     case NODE_DATA_CONFIRM:
@@ -72,20 +67,22 @@ void loop(void) {
 
     case NODE_DATA_TO_PC:
       break;
-  }
-  */
-  motor.DriveForward();
-  
+  } //End of Switch-Case Statement
+
 }
 
 void ParseData(void) {
-  if (vw_get_message(buf, &buflen)) // Non-blocking
-  {
-    for (int i = 0; i < buflen; i++)
-    {
-      Serial.print(buf[i]);
+  uint8_t buf[VW_MAX_MESSAGE_LEN];
+  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
+  if (vw_get_message(buf, &buflen)) {
+    //Printing out array
+    for (int i = 0; i < buflen; i++) {
+      Serial.print(buf[i], DEC);
       Serial.print(' ');
     }
     Serial.println();
+
+
   }
 }
