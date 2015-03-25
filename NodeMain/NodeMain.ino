@@ -75,12 +75,30 @@ void ParseData(void) {
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
+  bool startOfData = false;
+  bool endOfData = false;
+
+  //If message is received
   if (vw_get_message(buf, &buflen)) {
     //Printing out array
     for (int i = 0; i < buflen; i++) {
-      Serial.print(buf[i], DEC);
+      Serial.print(buf[i]);
       Serial.print(' ');
     }
     Serial.println();
-  }
+
+    //Check if first element is start of data
+    if (buf[0] == 91)
+      startOfData = true;
+      
+    //Check if end of data element is found
+    if (startOfData && !endOfData) {
+      for (int i = 0; i < buflen; i++) {
+        if (buf[i] == 93)
+          endOfData = true;
+      }
+
+    }
+
+  } //End of main if-statement
 }
