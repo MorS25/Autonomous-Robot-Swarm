@@ -97,8 +97,12 @@ void ParseData(void) {
         if (buf[i] == 93)
           endOfData = true;
       }
-
     }
-
+    
+    //Parse data in between
+    if(startOfData && endOfData){
+      
+    }
+    
   } //End of main if-statement
 }
