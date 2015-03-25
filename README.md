@@ -31,9 +31,8 @@ Overview:
 	7. Current Location -> Original Location										
 	8. Data sent back to PC via 433 mhz RF Transmitter Module.								
 	
-## Movement:																Each node has FIVE axis on which it may move.										
+## Movement:																Each node has two axis on which it may move.										
 	-Forward / Backward													
-	-Left Strafe / Right Strafe												
-	-Left Rotation / Right Rotation												
-	-Left Upward / Right Backward Diagonal											
-	-Right Upward / Left Backward Diagonal											
+	-Left Strafe / Right Strafe
+
+There are more axis, but due to issues they are not applicable.
