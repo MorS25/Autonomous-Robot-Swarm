@@ -3,6 +3,8 @@ Author: Avi Varshney
 Created: March 08, 2015
 Time: 3:03 AM
 
+
+
 Overview:															
 	The end goal of this project is to have a a set of autonomous robots that act as one group (swarm).  Each robot will be able to communicate with one another, via RF Modules.  Each robot (node), will be equipped with a variety of sensors that allow it to collect environmental data.  
 
@@ -34,5 +36,6 @@ Overview:
 ## Movement:																Each node has two axis on which it may move.										
 	-Forward / Backward													
 	-Left Strafe / Right Strafe
+	-Diagnol Left / Right
 
 There are more axis, but due to issues they are not applicable.
