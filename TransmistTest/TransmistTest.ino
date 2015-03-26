@@ -13,7 +13,7 @@ int index = 0;
 
 void setup(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   vw_set_tx_pin(TRANSMIT_PIN);
   vw_set_rx_pin(RECEIVE_PIN);
