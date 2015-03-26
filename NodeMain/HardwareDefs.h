@@ -1,10 +1,14 @@
 #ifndef HardwareDefs_h
 #define HardwareDefs_h
 
-//Initialize Pins for RF Modules
+//Pins for RF Modules
 #define RECEIVE_PIN           2
 #define TRANSMIT_PIN          3
 #define TRANSMIT_ENABLE_PIN   10
+
+//Pins for Ping Sensor and corresponding servo
+#define PING_SERVO_MOTOR      A0
+#define PING_SENSOR           A1
 
 //DATATYPES
 typedef enum {

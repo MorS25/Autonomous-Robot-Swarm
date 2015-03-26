@@ -2,7 +2,7 @@
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
 
-SoftwareSerial mySerial(4, 9);
+SoftwareSerial mySerial(9, 4);
 Adafruit_GPS GPS(&mySerial);
 
 #include "HardwareDefs.h"
@@ -53,7 +53,7 @@ void setup(void) {
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   // uncomment this line to turn on only the "minimum recommended" data
-  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
   // the parser doesn't care about other sentences at this time
 
@@ -71,6 +71,8 @@ void setup(void) {
 uint32_t timer = millis();
 
 void loop(void) {
+  GetGPSData();
+  
   switch (nodeData.nodeState) {
     case PC_DATA_PARSE:
       motor.DriveStop();
@@ -99,8 +101,6 @@ void loop(void) {
 }
 
 void ParseData(void) {
-  int 
-  
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
@@ -141,22 +141,16 @@ void ParseData(void) {
 void GetGPSData(void) {
   // read data from the GPS in the 'main loop'
   char c = GPS.read();
-
+  
   // if a sentence is received, we can check the checksum, parse it
   if (GPS.newNMEAreceived()) {
+    
+    Serial.println(GPS.lastNMEA());
+    
     if (!GPS.parse(GPS.lastNMEA()))
       return;
   }
 
   // if millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
-
-  // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 500) {
-    timer = millis();
-    Serial.print("Location: ");
-    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-    Serial.print(", ");
-    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
-  }
 }

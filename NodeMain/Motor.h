@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 
-//Initialize PIN VALS for Motor Control
+//PIN VALS for Motor Control
 #define MOTOR_ONE_ENABLE      6
 #define MOTOR_ONE_SET         8
 #define MOTOR_TWO_ENABLE      5
