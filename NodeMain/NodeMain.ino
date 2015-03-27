@@ -13,16 +13,10 @@ Adafruit_GPS GPS(&mySerial);
 #define NODE_TWO              255
 #define NODE_THREE            255
 
-//Initialize all motors
-/*
-  void DriveForward(void);
-  void DriveBackward(void);
-  void DriveLeft(void);
-  void DriveRight(void);
-  void DriveStop(void);
-*/
+//Initialize motors
 Motor motor(NODE_ONE);
 
+//Declare node
 NodeData nodeData;
 
 //Function Prototypes
@@ -41,30 +35,19 @@ void setup(void) {
 
   //Initialize all Node Data variable
   nodeData.nodeState = PC_DATA_PARSE;
+  nodeData.nosePos = ONE;
   nodeData.gpsLat = 0;
   nodeData.gpsLong = 0;
 
   //Initialize initial motor states
   motor.DriveStop();
 
-  // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
-
-  // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-  // uncomment this line to turn on only the "minimum recommended" data
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
-  // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
-  // the parser doesn't care about other sentences at this time
-
-  // Set the update rate
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
-  // For the parsing code to work nicely and have time to sort thru the data, and
-  // print it out we don't suggest using anything higher than 1 Hz
-
+  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
+  
   delay(1000);
-  // Ask for firmware version
-  Serial.println(PMTK_Q_RELEASE);
 }
 
 //Timer for GPS Module
