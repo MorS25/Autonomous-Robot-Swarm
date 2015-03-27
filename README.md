@@ -3,6 +3,10 @@ Author: Avi Varshney
 Created: March 08, 2015
 Time: 3:03 AM
 
+# Current Version 0.1
+	For this first version, the code will be universal for each node.  The nodes are not yet programmed to bea able
+	to communication with each other.
+
 Overview:															
 	The end goal of this project is to have a a set of autonomous robots that act as one group (swarm).  Each robot will be able to communicate with one another, via RF Modules.  Each robot (node), will be equipped with a variety of sensors that allow it to collect environmental data.  
 
@@ -31,8 +35,9 @@ Overview:
 	7. Current Location -> Original Location										
 	8. Data sent back to PC via 433 mhz RF Transmitter Module.								
 	
-## Movement:																Each node has two axis on which it may move.										
+## Movement:																Each node has three (working) axis on which it may move.								
 	-Forward / Backward													
 	-Left Strafe / Right Strafe
+	-Diagnol Left / Right
 
 There are more axis, but due to issues they are not applicable.
