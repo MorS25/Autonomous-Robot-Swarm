@@ -2,6 +2,8 @@
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
 
+//Pin 4 -> RX
+//Pin 5 -> TX
 SoftwareSerial mySerial(9, 4);
 Adafruit_GPS GPS(&mySerial);
 
@@ -13,10 +15,8 @@ Adafruit_GPS GPS(&mySerial);
 #define NODE_TWO              255
 #define NODE_THREE            255
 
-//Initialize motors
+//ALL VARIABLES
 Motor motor(NODE_ONE);
-
-//Declare node
 NodeData nodeData;
 
 //Function Prototypes
@@ -35,7 +35,7 @@ void setup(void) {
 
   //Initialize all Node Data variable
   nodeData.nodeState = PC_DATA_PARSE;
-  nodeData.nosePos = ONE;
+  nodeData.nodePos = ONE;
   nodeData.gpsLat = 0;
   nodeData.gpsLong = 0;
 
@@ -46,7 +46,7 @@ void setup(void) {
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
-  
+
   delay(1000);
 }
 
@@ -55,7 +55,7 @@ uint32_t timer = millis();
 
 void loop(void) {
   GetGPSData();
-  
+
   switch (nodeData.nodeState) {
     case PC_DATA_PARSE:
       motor.DriveStop();
@@ -122,18 +122,27 @@ void ParseData(void) {
 }
 
 void GetGPSData(void) {
-  // read data from the GPS in the 'main loop'
+  //Read data from the GPS in the 'main loop
   char c = GPS.read();
-  
-  // if a sentence is received, we can check the checksum, parse it
+
+  //If a sentence is received, we can check the checksum, parse it
   if (GPS.newNMEAreceived()) {
-    
-    Serial.println(GPS.lastNMEA());
-    
     if (!GPS.parse(GPS.lastNMEA()))
       return;
   }
 
-  // if millis() or timer wraps around, we'll just reset it
+  //If millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
+
+  if (GPS.fix) {
+    Serial.print("Location: ");
+    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+    Serial.print(", ");
+    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+
+    Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+    Serial.print("Angle: "); Serial.println(GPS.angle);
+    Serial.print("Altitude: "); Serial.println(GPS.altitude);
+    Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+  }
 }
