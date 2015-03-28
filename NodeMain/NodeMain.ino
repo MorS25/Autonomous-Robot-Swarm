@@ -1,3 +1,7 @@
+/* [ -> 91
+ * ] -> 93
+ */
+
 #include <Adafruit_GPS.h>
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
@@ -21,8 +25,8 @@ NodeData nodeData;
 
 //Function Prototypes
 void ParseData(void);
-int InitGPSModule(void);
 void GetGPSData(void);
+int InitGPSModule(void);
 long GetPingDistance(void);
 
 void setup(void) {
@@ -73,11 +77,12 @@ void loop(void) {
       ParseData();
       break;
 
-    case NODE_DATA_CONFIRM:
-      break;
-
-    case NODE_DATA_SET:
-      break;
+//    Will be in next version
+//    case NODE_DATA_CONFIRM:
+//      break;
+//
+//    case NODE_DATA_SET:
+//      break;
 
     case ORIGIN_TO_DESTINATION:
       break;
