@@ -131,6 +131,7 @@ void ParseData(void) {
   } //End of main if-statement
 }
 
+
 int InitGPSModule(void) {
   char c = GPS.read();
 
@@ -143,7 +144,7 @@ int InitGPSModule(void) {
 
   if (!GPS.fix)
     return STANDARD_ERROR;
-    
+
   return SUCCESS;
 }
 
@@ -173,9 +174,9 @@ void GetGPSData(void) {
   }
 }
 
-long GetPingDistance(void){
+long GetPingDistance(void) {
   long duration;
-  
+
   // The PING))) is triggered by a HIGH pulse of 2 or more microseconds.
   // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
   pinMode(PING_SENSOR, OUTPUT);
@@ -184,13 +185,13 @@ long GetPingDistance(void){
   digitalWrite(PING_SENSOR, HIGH);
   delayMicroseconds(5);
   digitalWrite(PING_SENSOR, LOW);
-  
+
   // The same pin is used to read the signal from the PING))): a HIGH
   // pulse whose duration is the time (in microseconds) from the sending
   // of the ping to the reception of its echo off of an object.
   pinMode(PING_SENSOR, INPUT);
   duration = pulseIn(PING_SENSOR, HIGH);
-  
+
   //Return distance in centimeters
   return (duration / 29 / 2);
 }

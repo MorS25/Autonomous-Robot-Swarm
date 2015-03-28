@@ -51,12 +51,12 @@ void loop(void)
       vw_wait_tx();
       vw_send((uint8_t *)dataToSend, strlen(dataToSend));
       vw_wait_tx();
-      
+
       //Printing for debugging
       Serial.println(dataToSend);
 
       //Reset Data Array
-      for (int i = 0; i < 20; i++)
+      for (int i = 0; i <= 20; i++)
         dataToSend[i] = ' ';
     }
   } //End of outer if-statement
