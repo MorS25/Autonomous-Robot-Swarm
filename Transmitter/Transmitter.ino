@@ -1,3 +1,4 @@
+//[4043.5715N 07400.2783W]
 #include <VirtualWire.h>
 
 #define TRANSMIT_PIN         A0
@@ -8,7 +9,7 @@ bool startOfData = false;
 bool endOfData = false;
 
 char input;
-char dataToSend[20];
+char dataToSend[23];
 int index = 0;
 
 void setup(void)
@@ -20,6 +21,9 @@ void setup(void)
   vw_set_ptt_pin(TRANSMIT_ENABLE_PIN);
   vw_set_ptt_inverted(true);
   vw_setup(4000);
+
+  Serial.println("Format: [DDMM.MMMM(N/S) DDDMM.MMMM(E/W)]\n");
+
 }
 
 void loop(void)
@@ -47,13 +51,18 @@ void loop(void)
       index = 0;
 
       //Send Data
-      vw_send((uint8_t *)dataToSend, strlen(dataToSend));
-      vw_wait_tx();
-      vw_send((uint8_t *)dataToSend, strlen(dataToSend));
-      vw_wait_tx();
-
-      //Printing for debugging
-      Serial.println(dataToSend);
+      //Write function to check for correct format
+      //This is a very basic test
+      if (dataToSend[11] == ' ' && dataToSend[23] == ']') {
+        vw_send((uint8_t *)dataToSend, strlen(dataToSend));
+        vw_wait_tx();
+        vw_send((uint8_t *)dataToSend, strlen(dataToSend));
+        vw_wait_tx();
+        Serial.println(dataToSend);
+        Serial.println();
+      }
+      else
+        Serial.println("INCORRECT FORMAT...\n");
 
       //Reset Data Array
       for (int i = 0; i <= 20; i++)

@@ -31,16 +31,23 @@ typedef enum {
   NODE_DATA_TO_PC
 } NodeState;
 
-//typedef enum{
-//  ONE,
-//  TWO,
-//  THREE 
-//}Node;
+typedef enum {
+  ONE,
+  TWO,
+  THREE
+} Node;
 
 typedef struct {
   long pingDistance;
-  float gpsLat;
-  float gpsLong;
+  
+  float destinationLat;
+  float destinationLong;
+  
+  float gpsLatDeg;
+  float gpsLatMin;
+  float gpsLongDeg;
+  float gpsLongMin;
+  
   NodeState nodeState;
   Node nodePos;
 } NodeData;

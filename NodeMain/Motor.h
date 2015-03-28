@@ -25,7 +25,7 @@
     else                                          \
       analogWrite(MOTOR_TWO_ENABLE, motorSpeed);  \
   } while(0)
-  
+
 class Motor {
   public:
     Motor(int SPEED);

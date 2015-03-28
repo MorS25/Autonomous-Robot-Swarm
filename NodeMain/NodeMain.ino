@@ -1,7 +1,3 @@
-/* [ -> 91
- * ] -> 93
- */
-
 #include <Adafruit_GPS.h>
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
@@ -24,8 +20,8 @@ Motor motor(NODE_ONE);
 NodeData nodeData;
 
 //Function Prototypes
-void ParseData(void);
 void GetGPSData(void);
+int ParseData(void);
 int InitGPSModule(void);
 long GetPingDistance(void);
 
@@ -40,11 +36,19 @@ void setup(void) {
   vw_setup(4000);
   vw_rx_start();
 
-  //Initialize all Node Data variable
+  //Initialize node data struct
+  nodeData.pingDistance = 0;
+
+  nodeData.destinationLat = 0;
+  nodeData.destinationLong = 0;
+
+  nodeData.gpsLatDeg = 0;
+  nodeData.gpsLatMin = 0;
+  nodeData.gpsLongDeg = 0;
+  nodeData.gpsLongMin = 0;
+
   nodeData.nodeState = PC_DATA_PARSE;
   nodeData.nodePos = ONE;
-  nodeData.gpsLat = 0;
-  nodeData.gpsLong = 0;
 
   //Initialize initial motor states
   motor.DriveStop();
@@ -64,6 +68,7 @@ void loop(void) {
 
   switch (nodeData.nodeState) {
     case INIT_NODE:
+      motor.DriveStop();
       //Loop until GPS does not have a fixed location
       while (!InitGPSModule())
         Serial.println("Waiting...");
@@ -72,17 +77,8 @@ void loop(void) {
       break;
 
     case PC_DATA_PARSE:
-      GetGPSData();
-      motor.DriveStop();
       ParseData();
       break;
-
-//    Will be in next version
-//    case NODE_DATA_CONFIRM:
-//      break;
-//
-//    case NODE_DATA_SET:
-//      break;
 
     case ORIGIN_TO_DESTINATION:
       break;
@@ -98,12 +94,13 @@ void loop(void) {
   } //End of Switch-Case Statement
 }
 
-void ParseData(void) {
+int ParseData(void) {
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
   bool startOfData = false;
   bool endOfData = false;
+  bool space = false;
 
   //If message is received
   if (vw_get_message(buf, &buflen)) {
@@ -119,23 +116,22 @@ void ParseData(void) {
       startOfData = true;
 
     //Check if end of data element is found
-    if (startOfData && !endOfData) {
-      for (int i = 0; i < buflen; i++) {
-        if (buf[i] == 93) {
-          endOfData = true;
-          break;
-        }
-      }
-    }
+    if (buf[23] == 93)
+      endOfData = true;
+
+    //Check if space exists between coordinates
+    if (buf[11] == 32)
+      space = true;
 
     //Parse data in between
-    if (startOfData && endOfData) {
-
+    if (startOfData && endOfData && space) {
+      Serial.println("All Good");
     }
+    else
+      return STANDARD_ERROR;
 
   } //End of main if-statement
 }
-
 
 int InitGPSModule(void) {
   char c = GPS.read();
@@ -147,9 +143,12 @@ int InitGPSModule(void) {
 
   if (timer > millis())  timer = millis();
 
-  if (!GPS.fix)
-    return STANDARD_ERROR;
-
+  //Check every two seconds
+  if (millis() - timer > 2000) {
+    timer = millis(); // reset the timer
+    if (!GPS.fix)
+      return STANDARD_ERROR;
+  }
   return SUCCESS;
 }
 
@@ -163,19 +162,16 @@ void GetGPSData(void) {
 
   if (timer > millis())  timer = millis();
 
-  if (millis() - timer > 2000) {
-    timer = millis();
-    if (GPS.fix) {
-      Serial.print("Location: ");
-      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-      Serial.print(", ");
-      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+  if (GPS.fix) {
+    Serial.print("Location: ");
+    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+    Serial.print(", ");
+    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
 
-      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-      Serial.print("Angle: "); Serial.println(GPS.angle);
-      Serial.print("Altitude: "); Serial.println(GPS.altitude);
-      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
-    }
+    Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+    Serial.print("Angle: "); Serial.println(GPS.angle);
+    Serial.print("Altitude: "); Serial.println(GPS.altitude);
+    Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
   }
 }
 

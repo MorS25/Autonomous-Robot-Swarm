@@ -1,6 +1,6 @@
 #include "Motor.h"
 
-Motor::Motor(int SPEED){
+Motor::Motor(int SPEED) {
   pinMode(MOTOR_ONE_ENABLE, OUTPUT);
   pinMode(MOTOR_ONE_SET, OUTPUT);
   pinMode(MOTOR_TWO_ENABLE, OUTPUT);
@@ -9,7 +9,7 @@ Motor::Motor(int SPEED){
   //pinMode(MOTOR_THREE_SET, OUTPUT);
   pinMode(MOTOR_FOUR_ENABLE, OUTPUT);
   pinMode(MOTOR_FOUR_SET, OUTPUT);
-  
+
   motorSpeed = SPEED;
 };
 
