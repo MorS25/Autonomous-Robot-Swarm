@@ -21,6 +21,9 @@ NodeData nodeData;
 
 //Function Prototypes
 void ParseData(void);
+int InitGPSModule(void);
+void GetGPSData(void);
+long GetPingDistance(void);
 
 void setup(void) {
   Serial.begin(115200);
@@ -54,10 +57,18 @@ void setup(void) {
 uint32_t timer = millis();
 
 void loop(void) {
-  GetGPSData();
 
   switch (nodeData.nodeState) {
+    case INIT_NODE:
+      //Loop until GPS does not have a fixed location
+      while (!InitGPSModule())
+        Serial.println("Waiting...");
+      //Once fixed location is found change states
+      nodeData.nodeState = PC_DATA_PARSE;
+      break;
+
     case PC_DATA_PARSE:
+      GetGPSData();
       motor.DriveStop();
       ParseData();
       break;
@@ -79,7 +90,6 @@ void loop(void) {
 
     case NODE_DATA_TO_PC:
       break;
-
   } //End of Switch-Case Statement
 }
 
@@ -121,28 +131,66 @@ void ParseData(void) {
   } //End of main if-statement
 }
 
-void GetGPSData(void) {
-  //Read data from the GPS in the 'main loop
+int InitGPSModule(void) {
   char c = GPS.read();
 
-  //If a sentence is received, we can check the checksum, parse it
+  if (GPS.newNMEAreceived()) {
+    if (!GPS.parse(GPS.lastNMEA()))
+      return STANDARD_ERROR;
+  }
+
+  if (timer > millis())  timer = millis();
+
+  if (!GPS.fix)
+    return STANDARD_ERROR;
+    
+  return SUCCESS;
+}
+
+void GetGPSData(void) {
+  char c = GPS.read();
+
   if (GPS.newNMEAreceived()) {
     if (!GPS.parse(GPS.lastNMEA()))
       return;
   }
 
-  //If millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
 
-  if (GPS.fix) {
-    Serial.print("Location: ");
-    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-    Serial.print(", ");
-    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+  if (millis() - timer > 2000) {
+    timer = millis();
+    if (GPS.fix) {
+      Serial.print("Location: ");
+      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+      Serial.print(", ");
+      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
 
-    Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-    Serial.print("Angle: "); Serial.println(GPS.angle);
-    Serial.print("Altitude: "); Serial.println(GPS.altitude);
-    Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+      Serial.print("Angle: "); Serial.println(GPS.angle);
+      Serial.print("Altitude: "); Serial.println(GPS.altitude);
+      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+    }
   }
+}
+
+long GetPingDistance(void){
+  long duration;
+  
+  // The PING))) is triggered by a HIGH pulse of 2 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+  pinMode(PING_SENSOR, OUTPUT);
+  digitalWrite(PING_SENSOR, LOW);
+  delayMicroseconds(2);
+  digitalWrite(PING_SENSOR, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(PING_SENSOR, LOW);
+  
+  // The same pin is used to read the signal from the PING))): a HIGH
+  // pulse whose duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+  pinMode(PING_SENSOR, INPUT);
+  duration = pulseIn(PING_SENSOR, HIGH);
+  
+  //Return distance in centimeters
+  return (duration / 29 / 2);
 }

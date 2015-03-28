@@ -1,6 +1,10 @@
 #ifndef HardwareDefs_h
 #define HardwareDefs_h
 
+//Function return types
+#define STANDARD_ERROR        0
+#define SUCCESS               1
+
 //Pins for RF Modules
 #define RECEIVE_PIN           2
 #define TRANSMIT_PIN          3
@@ -17,29 +21,28 @@
 
 //DATATYPES
 typedef enum {
+  INIT_NODE,
   PC_DATA_PARSE,
-  
-  //Will be put in next revision
-  NODE_DATA_CONFIRM,
-  NODE_DATA_SET,
-  
+  NODE_DATA_CONFIRM,  //Will be put in next version
+  NODE_DATA_SET,      //Will be put in next version
   ORIGIN_TO_DESTINATION,
   COLLECT_DATA,
   DESTINATION_TO_ORIGIN,
   NODE_DATA_TO_PC
 } NodeState;
 
-typedef enum{
-  ONE,
-  TWO,
-  THREE 
-}Node;
+//typedef enum{
+//  ONE,
+//  TWO,
+//  THREE 
+//}Node;
 
 typedef struct {
-  NodeState nodeState;
-  Node nodePos;
+  long pingDistance;
   float gpsLat;
   float gpsLong;
+  NodeState nodeState;
+  Node nodePos;
 } NodeData;
 
 #endif
