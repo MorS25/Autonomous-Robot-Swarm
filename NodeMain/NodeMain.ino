@@ -22,7 +22,7 @@ NodeData nodeData;
 //Function Prototypes
 void ParseData(void);
 void GetGPSData(void);
-int InitGPSModule(void);
+bool InitGPSModule(void);
 long GetPingDistance(void);
 
 void setup(void) {
@@ -35,23 +35,7 @@ void setup(void) {
   vw_set_ptt_inverted(false);
   vw_setup(4000);
   vw_rx_start();
-
-  //Initialize node data struct
-  nodeData.pingDistance = 0;
-
-  nodeData.destLatDeg = 0;
-  nodeData.destLatMin = 0;
-  nodeData.destLongDeg = 0;
-  nodeData.destLongMin = 0;
-
-  nodeData.gpsLatDeg = 0;
-  nodeData.gpsLatMin = 0;
-  nodeData.gpsLongDeg = 0;
-  nodeData.gpsLongMin = 0;
-
-  nodeData.nodeState = PC_DATA_PARSE;
-  nodeData.nodePos = ONE;
-
+  
   //Initialize initial motor states
   motor.DriveStop();
 
@@ -60,26 +44,37 @@ void setup(void) {
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
 
-  delay(1000);
+  Serial.println("Connecting...");  //Debugging purposes
+  delay(5000);
 }
 
 //Timer for GPS Module
 uint32_t timer = millis();
 
 void loop(void) {
-
   switch (nodeData.nodeState) {
     case INIT_NODE:
-      motor.DriveStop();
-      //Loop until GPS does not have a fixed location
-      while (!InitGPSModule())
-        Serial.println("Waiting...");
-      //Once fixed location is found change states
+      //Initialize node data struct
+      nodeData.pingDistance = 0;
+
+      nodeData.destLatDeg = 0;
+      nodeData.destLatMin = 0;
+      nodeData.destLongDeg = 0;
+      nodeData.destLongMin = 0;
+
+      nodeData.gpsLatDeg = 0;
+      nodeData.gpsLatMin = 0;
+      nodeData.gpsLongDeg = 0;
+      nodeData.gpsLongMin = 0;
+
+      nodeData.nodeState = INIT_NODE;
+      nodeData.nodePos = ONE;
       nodeData.nodeState = PC_DATA_PARSE;
+      
       break;
 
     case PC_DATA_PARSE:
-      //GetGPSData();
+      GetGPSData();
       ParseData();
       break;
 
@@ -162,31 +157,27 @@ void ParseData(void) {
       }
     }
 
-    Serial.println(nodeData.destLatDeg);
-    Serial.println(nodeData.destLatMin);
-    Serial.println(nodeData.destLongDeg);
-    Serial.println(nodeData.destLongMin);
-
-  } //End of main if-statement
+    //    Uncomment for debugging
+    //    Serial.println(nodeData.destLatDeg);
+    //    Serial.println(nodeData.destLatMin);
+    //    Serial.println(nodeData.destLongDeg);
+    //    Serial.println(nodeData.destLongMin);
+  } //End of outer if-statement
 }
 
-int InitGPSModule(void) {
+bool InitGPSModule(void) {
   char c = GPS.read();
 
   if (GPS.newNMEAreceived()) {
     if (!GPS.parse(GPS.lastNMEA()))
-      return STANDARD_ERROR;
+      return false;
   }
 
   if (timer > millis())  timer = millis();
 
-  //Check every two seconds
-  if (millis() - timer > 2000) {
-    timer = millis(); // reset the timer
-    if (!GPS.fix)
-      return STANDARD_ERROR;
-  }
-  return SUCCESS;
+  if (!GPS.fix)
+    return false;
+  return true;
 }
 
 void GetGPSData(void) {
@@ -200,13 +191,9 @@ void GetGPSData(void) {
   if (timer > millis())  timer = millis();
 
   if (GPS.fix) {
-    Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-    Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
-
-    Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-    Serial.print("Angle: "); Serial.println(GPS.angle);
-    Serial.print("Altitude: "); Serial.println(GPS.altitude);
-    Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+    Serial.print(GPS.latitude); Serial.print(GPS.lat);
+    Serial.print(", ");
+    Serial.print(GPS.longitude); Serial.println(GPS.lon);
   }
 }
 

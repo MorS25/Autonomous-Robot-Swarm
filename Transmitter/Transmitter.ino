@@ -27,7 +27,6 @@ void setup(void)
   vw_setup(4000);
 
   Serial.println("Format: [DDMM.MMMM(N/S) DDDMM.MMMM(E/W)]\n");
-
 }
 
 void loop(void)

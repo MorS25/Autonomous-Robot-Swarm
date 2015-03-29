@@ -1,10 +1,6 @@
 #ifndef HardwareDefs_h
 #define HardwareDefs_h
 
-//Function return types
-#define STANDARD_ERROR        0
-#define SUCCESS               1
-
 //Pins for RF Modules
 #define RECEIVE_PIN           2
 #define TRANSMIT_PIN          3
