@@ -40,8 +40,10 @@ typedef enum {
 typedef struct {
   long pingDistance;
   
-  float destinationLat;
-  float destinationLong;
+  float destLatDeg;
+  float destLatMin;
+  float destLongDeg;
+  float destLongMin;
   
   float gpsLatDeg;
   float gpsLatMin;

@@ -20,8 +20,8 @@ Motor motor(NODE_ONE);
 NodeData nodeData;
 
 //Function Prototypes
+void ParseData(void);
 void GetGPSData(void);
-int ParseData(void);
 int InitGPSModule(void);
 long GetPingDistance(void);
 
@@ -39,8 +39,10 @@ void setup(void) {
   //Initialize node data struct
   nodeData.pingDistance = 0;
 
-  nodeData.destinationLat = 0;
-  nodeData.destinationLong = 0;
+  nodeData.destLatDeg = 0;
+  nodeData.destLatMin = 0;
+  nodeData.destLongDeg = 0;
+  nodeData.destLongMin = 0;
 
   nodeData.gpsLatDeg = 0;
   nodeData.gpsLatMin = 0;
@@ -77,6 +79,7 @@ void loop(void) {
       break;
 
     case PC_DATA_PARSE:
+      //GetGPSData();
       ParseData();
       break;
 
@@ -94,13 +97,13 @@ void loop(void) {
   } //End of Switch-Case Statement
 }
 
-int ParseData(void) {
+//----  HELPER FUNCTIONS  ----//
+/* This function does NOT require the incoming data to be checked for errors
+ * as that is ALL handled inside the Transmit.ino file
+ */
+void ParseData(void) {
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
-
-  bool startOfData = false;
-  bool endOfData = false;
-  bool space = false;
 
   //If message is received
   if (vw_get_message(buf, &buflen)) {
@@ -111,24 +114,58 @@ int ParseData(void) {
     }
     Serial.println();
 
-    //Check if first element is start of data
-    if (buf[0] == 91)
-      startOfData = true;
-
-    //Check if end of data element is found
-    if (buf[23] == 93)
-      endOfData = true;
-
-    //Check if space exists between coordinates
-    if (buf[11] == 32)
-      space = true;
-
-    //Parse data in between
-    if (startOfData && endOfData && space) {
-      Serial.println("All Good");
+    //HANDLES ALL PARSING OF STRING
+    //VERY RUDIMENTARY CODE
+    {
+      char str1[10];
+      char str2[10];
+      char str3[10];
+      char str4[10];
+      char str5[10];
+      {
+        sprintf(str1, "%c", (char) buf[1]);
+        sprintf(str2, "%c", (char) buf[2]);
+        strcat(str1, str2);
+        nodeData.destLatDeg = atof(str1);
+      }
+      {
+        sprintf(str1, "%c", (char) buf[3]);
+        sprintf(str2, "%c", (char) buf[4]);
+        sprintf(str3, "%c", (char) buf[5]);
+        sprintf(str4, "%c", (char) buf[6]);
+        sprintf(str5, "%c", (char) buf[7]);
+        strcat(str1, str2);
+        strcat(str1, str3);
+        strcat(str1, str4);
+        strcat(str1, str5);
+        nodeData.destLatMin = atof(str1);
+      }
+      {
+        sprintf(str1, "%c", (char) buf[12]);
+        sprintf(str2, "%c", (char) buf[13]);
+        sprintf(str3, "%c", (char) buf[14]);
+        strcat(str1, str2);
+        strcat(str1, str3);
+        nodeData.destLongDeg = atof(str1);
+      }
+      {
+        sprintf(str1, "%c", (char) buf[15]);
+        sprintf(str2, "%c", (char) buf[16]);
+        sprintf(str3, "%c", (char) buf[17]);
+        sprintf(str4, "%c", (char) buf[18]);
+        sprintf(str5, "%c", (char) buf[19]);
+        strcat(str1, str2);
+        strcat(str1, str3);
+        strcat(str1, str4);
+        strcat(str1, str5);
+        nodeData.destLongMin = atof(str1);
+      }
     }
-    else
-      return STANDARD_ERROR;
+
+    Serial.println(nodeData.destLatDeg);
+    Serial.println(nodeData.destLatMin);
+    Serial.println(nodeData.destLongDeg);
+    Serial.println(nodeData.destLongMin);
 
   } //End of main if-statement
 }
@@ -163,9 +200,7 @@ void GetGPSData(void) {
   if (timer > millis())  timer = millis();
 
   if (GPS.fix) {
-    Serial.print("Location: ");
     Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-    Serial.print(", ");
     Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
 
     Serial.print("Speed (knots): "); Serial.println(GPS.speed);
