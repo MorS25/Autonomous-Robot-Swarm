@@ -26,7 +26,7 @@ void setup(void)
   vw_set_ptt_inverted(true);
   vw_setup(4000);
 
-  Serial.println("Format: [DDMM.MMMM(N/S) DDDMM.MMMM(E/W)]\n");
+  //Serial.println("Format: [DDMM.MMMM(N/S) DDDMM.MMMM(E/W)]\n");
 }
 
 void loop(void)
@@ -53,19 +53,11 @@ void loop(void)
       endOfData = false;
       index = 0;
 
-      //Send Data
-      //Write function to check for correct format
-      //This is a very basic test
-      if (dataToSend[11] == ' ' && dataToSend[23] == ']') {
-        vw_send((uint8_t *)dataToSend, strlen(dataToSend));
-        vw_wait_tx();
-        vw_send((uint8_t *)dataToSend, strlen(dataToSend));
-        vw_wait_tx();
-        Serial.println(dataToSend);
-        Serial.println();
-      }
-      else
-        Serial.println("INCORRECT FORMAT...\n");
+      vw_send((uint8_t *)dataToSend, strlen(dataToSend));
+      vw_wait_tx();
+      vw_send((uint8_t *)dataToSend, strlen(dataToSend));
+      vw_wait_tx();
+      Serial.println(dataToSend);
 
       //Reset Data Array
       for (int i = 0; i <= 20; i++)

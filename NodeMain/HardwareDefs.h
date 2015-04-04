@@ -6,9 +6,7 @@
 #define TRANSMIT_PIN          3
 #define TRANSMIT_ENABLE_PIN   10
 
-//Pins for Ping Sensor and corresponding servo
-#define PING_SERVO_MOTOR      A0
-#define PING_SENSOR           A1
+#define PING_SENSOR           A4
 
 //Values for ping servo motor
 #define SERVO_LEFT_POS        0
@@ -17,6 +15,11 @@
 
 //DATATYPES
 typedef enum {
+  TEST,
+  
+  USER_CONTROL,
+  USER_CONTROL_RETURN,
+  
   INIT_NODE,
   PC_DATA_PARSE,
   NODE_DATA_CONFIRM,  //Will be put in next version
@@ -27,13 +30,10 @@ typedef enum {
   NODE_DATA_TO_PC
 } NodeState;
 
-typedef enum {
-  ONE,
-  TWO,
-  THREE
-} Node;
-
 typedef struct {
+  char pastMoves[100];
+  int moveTimes[100];
+  
   long pingDistance;
   
   float destLatDeg;
@@ -47,7 +47,6 @@ typedef struct {
   float gpsLongMin;
   
   NodeState nodeState;
-  Node nodePos;
 } NodeData;
 
 #endif

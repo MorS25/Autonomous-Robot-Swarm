@@ -10,6 +10,8 @@ Motor::Motor(int SPEED) {
   pinMode(MOTOR_FOUR_ENABLE, OUTPUT);
   pinMode(MOTOR_FOUR_SET, OUTPUT);
 
+  pinMode(MOTOR_ONE_ENCODER, INPUT);
+
   motorSpeed = SPEED;
 };
 

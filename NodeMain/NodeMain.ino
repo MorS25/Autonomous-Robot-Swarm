@@ -1,3 +1,13 @@
+/*
+    w  ->  Forward
+    a  ->  Left
+    s  ->  Backward
+    d  ->  Right
+    q  ->  Stop
+    e  ->  CollectData
+    r  ->  Return
+*/
+
 #include <Adafruit_GPS.h>
 #include <SoftwareSerial.h>
 #include <VirtualWire.h>
@@ -19,7 +29,12 @@ Adafruit_GPS GPS(&mySerial);
 Motor motor(NODE_ONE);
 NodeData nodeData;
 
+int moveIndex = 0;
+char pastMove = ' ';
+char nextMove = ' ';
+
 //Function Prototypes
+char GetInput(void);
 void ParseData(void);
 void GetGPSData(void);
 bool InitGPSModule(void);
@@ -35,9 +50,12 @@ void setup(void) {
   vw_set_ptt_inverted(false);
   vw_setup(4000);
   vw_rx_start();
-  
-  //Initialize initial motor states
+
+  //Initialize initial motor states3
   motor.DriveStop();
+
+  //Initialize initial node state
+  nodeData.nodeState = INIT_NODE;
 
   GPS.begin(9600);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
@@ -45,7 +63,6 @@ void setup(void) {
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
 
   Serial.println("Connecting...");  //Debugging purposes
-  delay(5000);
 }
 
 //Timer for GPS Module
@@ -53,6 +70,9 @@ uint32_t timer = millis();
 
 void loop(void) {
   switch (nodeData.nodeState) {
+    case TEST:
+      motor.DriveForward();
+      break;
     case INIT_NODE:
       //Initialize node data struct
       nodeData.pingDistance = 0;
@@ -67,32 +87,101 @@ void loop(void) {
       nodeData.gpsLongDeg = 0;
       nodeData.gpsLongMin = 0;
 
-      nodeData.nodeState = INIT_NODE;
-      nodeData.nodePos = ONE;
-      nodeData.nodeState = PC_DATA_PARSE;
+      for (int i = 0; i < 100; i++) {
+        nodeData.pastMoves[i] = ' ';
+        nodeData.moveTimes[i] = 0;
+      }
       
+      nodeData.nodeState = USER_CONTROL;
+      //nodeData.nodeState = TEST;
       break;
 
-    case PC_DATA_PARSE:
-      GetGPSData();
-      ParseData();
+    case USER_CONTROL:
+      nextMove = GetInput();
+
+      //If next move is the same as previous move then jump iteration
+      if (nextMove != pastMove) {
+        pastMove = nextMove;
+        switch (nextMove) {
+          case 'w':
+            motor.DriveForward();
+            ++moveIndex;
+            break;
+          case 'a':
+            motor.DriveLeft();
+            ++moveIndex;
+            break;
+          case 's':
+            motor.DriveBackward();
+            ++moveIndex;
+            break;
+          case 'd':
+            motor.DriveRight();
+            ++moveIndex;
+            break;
+          case 'r':
+            nodeData.nodeState = USER_CONTROL_RETURN;
+            break;
+        }
+      }
       break;
 
-    case ORIGIN_TO_DESTINATION:
+    case USER_CONTROL_RETURN:
+      motor.DriveStop();
       break;
 
-    case COLLECT_DATA:
-      break;
-
-    case DESTINATION_TO_ORIGIN:
-      break;
-
-    case NODE_DATA_TO_PC:
-      break;
+      //    case PC_DATA_PARSE:
+      //      GetGPSData();
+      //      ParseData();
+      //      break;
+      //    case ORIGIN_TO_DESTINATION:
+      //      break;
+      //    case COLLECT_DATA:
+      //      break;
+      //    case DESTINATION_TO_ORIGIN:
+      //      break;
+      //    case NODE_DATA_TO_PC:
+      //      break;
   } //End of Switch-Case Statement
 }
 
 //----  HELPER FUNCTIONS  ----//
+char GetInput(void) {
+  uint8_t buf[VW_MAX_MESSAGE_LEN];
+  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
+  //If message is received
+  if (vw_get_message(buf, &buflen)) {
+    if (buf[1] == 'w') {
+      nodeData.pastMoves[moveIndex] = 'w';
+      return 'w';
+    }
+    else if (buf[1] == 'a') {
+      nodeData.pastMoves[moveIndex] = 'a';
+      return 'a';
+    }
+    else if (buf[1] == 's') {
+      nodeData.pastMoves[moveIndex] = 's';
+      return 's';
+    }
+    else if (buf[1] == 'd') {
+      nodeData.pastMoves[moveIndex] = 'd';
+      return 'd';
+    }
+    else if (buf[1] == 'q') {
+      motor.DriveStop();
+      return 'q';
+    }
+    else if (buf[1] == 'e') {
+      motor.DriveStop();
+      //CALL DATA COLLECTION FUNCTION
+    }
+    else if (buf[1] == 'r') {
+      return 'r';
+    }
+  }
+}
+
 /* This function does NOT require the incoming data to be checked for errors
  * as that is ALL handled inside the Transmit.ino file
  */
