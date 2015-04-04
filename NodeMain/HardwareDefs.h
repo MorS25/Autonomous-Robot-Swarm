@@ -15,11 +15,9 @@
 
 //DATATYPES
 typedef enum {
-  TEST,
-  
-  USER_CONTROL,
-  USER_CONTROL_RETURN,
-  
+  TEST,                //Used for debugging
+  USER_CONTROL,        //Used for User Control instead of autonomous
+  USER_CONTROL_RETURN, //Used for User Control instead of autonomous
   INIT_NODE,
   PC_DATA_PARSE,
   NODE_DATA_CONFIRM,  //Will be put in next version
@@ -31,8 +29,9 @@ typedef enum {
 } NodeState;
 
 typedef struct {
-  char pastMoves[100];
-  int moveTimes[100];
+  uint32_t timer;
+  char pastMoves[20];
+  int moveTimes[20];
   
   long pingDistance;
   

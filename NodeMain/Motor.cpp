@@ -5,12 +5,15 @@ Motor::Motor(int SPEED) {
   pinMode(MOTOR_ONE_SET, OUTPUT);
   pinMode(MOTOR_TWO_ENABLE, OUTPUT);
   pinMode(MOTOR_TWO_SET, OUTPUT);
-  //pinMode(MOTOR_THREE_ENABLE, OUTPUT);
-  //pinMode(MOTOR_THREE_SET, OUTPUT);
+  //  pinMode(MOTOR_THREE_ENABLE, OUTPUT);
+  //  pinMode(MOTOR_THREE_SET, OUTPUT);
   pinMode(MOTOR_FOUR_ENABLE, OUTPUT);
   pinMode(MOTOR_FOUR_SET, OUTPUT);
 
-  pinMode(MOTOR_ONE_ENCODER, INPUT);
+  //  pinMode(MOTOR_ONE_ENCODER, INPUT);
+  //  pinMode(MOTOR_TWO_ENCODER, INPUT);
+  //  pinMode(MOTOR_THREE_ENCODER, INPUT);
+  //  pinMode(MOTOR_FOUR_ENCODER, INPUT);
 
   motorSpeed = SPEED;
 };

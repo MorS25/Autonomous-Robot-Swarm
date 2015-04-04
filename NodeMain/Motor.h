@@ -14,10 +14,10 @@
 #define MOTOR_FOUR_SET        13
 
 //Initialize PIN VALS for motor encoders
-#define MOTOR_ONE_ENCODER     A0
-#define MOTOR_TWO_ENCODER     A1
-#define MOTOR_THREE_ENCODER   A2
-#define MOTOR_FOUR_ENCODER    A3
+//#define MOTOR_ONE_ENCODER     A0
+//#define MOTOR_TWO_ENCODER     A1
+//#define MOTOR_THREE_ENCODER   A2
+//#define MOTOR_FOUR_ENCODER    A3
 
 #define MOTOR_TWO_RUN(x) do {                     \
     if(x < 255)                                   \

@@ -64,4 +64,17 @@ void loop(void)
         dataToSend[i] = ' ';
     }
   } //End of outer if-statement
+
+  uint8_t buf[VW_MAX_MESSAGE_LEN];
+  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
+  //If message is received
+  if (vw_get_message(buf, &buflen)) {
+    for (int i = 0; i < buflen; i++)
+    {
+      Serial.print(buf[i], HEX);
+      Serial.print(' ');
+    }
+    Serial.println();
+  }
 }

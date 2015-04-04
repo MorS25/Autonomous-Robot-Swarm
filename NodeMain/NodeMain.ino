@@ -21,23 +21,27 @@ Adafruit_GPS GPS(&mySerial);
 #include "Motor.h"
 
 //Define individual node speeds
-#define NODE_ONE              255
+#define NODE_ONE              230
 #define NODE_TWO              255
 #define NODE_THREE            255
 
 //ALL VARIABLES
-Motor motor(NODE_ONE);
+Motor motor(NODE_TWO);
 NodeData nodeData;
 
-int moveIndex = 0;
+int moveIndex = 1;
 char pastMove = ' ';
 char nextMove = ' ';
 
+int returnMoveIndex;
+
 //Function Prototypes
 char GetInput(void);
-void ParseData(void);
-void GetGPSData(void);
-bool InitGPSModule(void);
+void ResetUserControlTimer(void);
+
+//void ParseData(void);
+//void GetGPSData(void);
+//bool InitGPSModule(void);
 long GetPingDistance(void);
 
 void setup(void) {
@@ -71,7 +75,7 @@ uint32_t timer = millis();
 void loop(void) {
   switch (nodeData.nodeState) {
     case TEST:
-      motor.DriveForward();
+      motor.DriveStop();
       break;
     case INIT_NODE:
       //Initialize node data struct
@@ -87,11 +91,13 @@ void loop(void) {
       nodeData.gpsLongDeg = 0;
       nodeData.gpsLongMin = 0;
 
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < 20; i++) {
         nodeData.pastMoves[i] = ' ';
         nodeData.moveTimes[i] = 0;
       }
-      
+
+      nodeData.timer = millis();
+
       nodeData.nodeState = USER_CONTROL;
       //nodeData.nodeState = TEST;
       break;
@@ -104,30 +110,75 @@ void loop(void) {
         pastMove = nextMove;
         switch (nextMove) {
           case 'w':
+            ResetUserControlTimer();
             motor.DriveForward();
-            ++moveIndex;
             break;
           case 'a':
+            ResetUserControlTimer();
             motor.DriveLeft();
-            ++moveIndex;
             break;
           case 's':
+            ResetUserControlTimer();
             motor.DriveBackward();
-            ++moveIndex;
             break;
           case 'd':
+            ResetUserControlTimer();
             motor.DriveRight();
-            ++moveIndex;
+            break;
+          case 'q':
+            ResetUserControlTimer();
+            motor.DriveStop();
+            break;
+          case 'e':
             break;
           case 'r':
+            ResetUserControlTimer();
             nodeData.nodeState = USER_CONTROL_RETURN;
+            motor.DriveStop();
             break;
         }
       }
       break;
 
     case USER_CONTROL_RETURN:
-      motor.DriveStop();
+      vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
+      vw_wait_tx();
+      vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
+      vw_wait_tx();
+
+      //Serial.println(nodeData.pastMoves);
+      nodeData.nodeState = TEST;
+
+      //Start by searching for empty char
+      for (int i = 1; i < 20; i++) {
+        if (nodeData.pastMoves[i] == ' ') {
+          returnMoveIndex = i - 1;
+          i = 20;  //Exit out of for loop
+        }
+      }
+
+      //Loop through array backwards, and reverse motor directions
+      for (; returnMoveIndex > 0; returnMoveIndex--) {
+        Serial.print(nodeData.pastMoves[returnMoveIndex]);
+        Serial.print("  ->  ");
+        Serial.println(nodeData.moveTimes[returnMoveIndex]);
+
+        if (nodeData.pastMoves[returnMoveIndex] == 'w')
+          motor.DriveBackward();
+        else if (nodeData.pastMoves[returnMoveIndex] == 'a')
+          motor.DriveRight();
+        else if (nodeData.pastMoves[returnMoveIndex] == 's')
+          motor.DriveForward();
+        else if (nodeData.pastMoves[returnMoveIndex] == 'd')
+          motor.DriveLeft();
+
+        //Skip right over the 'q' type command, since this would only make the robot pause
+        //for no reason while traversing back
+
+        //Delay for same amount moved in converse direction
+        delay(nodeData.moveTimes[returnMoveIndex]);
+        motor.DriveStop();
+      }
       break;
 
       //    case PC_DATA_PARSE:
@@ -146,6 +197,7 @@ void loop(void) {
 }
 
 //----  HELPER FUNCTIONS  ----//
+//This functions is specifically required to make sure we have valid commands
 char GetInput(void) {
   uint8_t buf[VW_MAX_MESSAGE_LEN];
   uint8_t buflen = VW_MAX_MESSAGE_LEN;
@@ -169,7 +221,7 @@ char GetInput(void) {
       return 'd';
     }
     else if (buf[1] == 'q') {
-      motor.DriveStop();
+      nodeData.pastMoves[moveIndex] = 'q';
       return 'q';
     }
     else if (buf[1] == 'e') {
@@ -182,128 +234,136 @@ char GetInput(void) {
   }
 }
 
+void ResetUserControlTimer(void) {
+  nodeData.moveTimes[moveIndex - 1] = abs(millis() - timer) / 10;
+  ++moveIndex;
+  nodeData.timer = millis();
+}
+
 /* This function does NOT require the incoming data to be checked for errors
  * as that is ALL handled inside the Transmit.ino file
  */
+/*
 void ParseData(void) {
-  uint8_t buf[VW_MAX_MESSAGE_LEN];
-  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+ uint8_t buf[VW_MAX_MESSAGE_LEN];
+ uint8_t buflen = VW_MAX_MESSAGE_LEN;
 
-  //If message is received
-  if (vw_get_message(buf, &buflen)) {
-    //Printing out array
-    for (int i = 0; i < buflen; i++) {
-      Serial.print(buf[i]);
-      Serial.print(' ');
-    }
-    Serial.println();
+ //If message is received
+ if (vw_get_message(buf, &buflen)) {
+   //Printing out array
+   for (int i = 0; i < buflen; i++) {
+     Serial.print(buf[i]);
+     Serial.print(' ');
+   }
+   Serial.println();
 
-    //HANDLES ALL PARSING OF STRING
-    //VERY RUDIMENTARY CODE
-    {
-      char str1[10];
-      char str2[10];
-      char str3[10];
-      char str4[10];
-      char str5[10];
-      {
-        sprintf(str1, "%c", (char) buf[1]);
-        sprintf(str2, "%c", (char) buf[2]);
-        strcat(str1, str2);
-        nodeData.destLatDeg = atof(str1);
-      }
-      {
-        sprintf(str1, "%c", (char) buf[3]);
-        sprintf(str2, "%c", (char) buf[4]);
-        sprintf(str3, "%c", (char) buf[5]);
-        sprintf(str4, "%c", (char) buf[6]);
-        sprintf(str5, "%c", (char) buf[7]);
-        strcat(str1, str2);
-        strcat(str1, str3);
-        strcat(str1, str4);
-        strcat(str1, str5);
-        nodeData.destLatMin = atof(str1);
-      }
-      {
-        sprintf(str1, "%c", (char) buf[12]);
-        sprintf(str2, "%c", (char) buf[13]);
-        sprintf(str3, "%c", (char) buf[14]);
-        strcat(str1, str2);
-        strcat(str1, str3);
-        nodeData.destLongDeg = atof(str1);
-      }
-      {
-        sprintf(str1, "%c", (char) buf[15]);
-        sprintf(str2, "%c", (char) buf[16]);
-        sprintf(str3, "%c", (char) buf[17]);
-        sprintf(str4, "%c", (char) buf[18]);
-        sprintf(str5, "%c", (char) buf[19]);
-        strcat(str1, str2);
-        strcat(str1, str3);
-        strcat(str1, str4);
-        strcat(str1, str5);
-        nodeData.destLongMin = atof(str1);
-      }
-    }
+   //HANDLES ALL PARSING OF STRING
+   //VERY RUDIMENTARY CODE
+   {
+     char str1[10];
+     char str2[10];
+     char str3[10];
+     char str4[10];
+     char str5[10];
+     {
+       sprintf(str1, "%c", (char) buf[1]);
+       sprintf(str2, "%c", (char) buf[2]);
+       strcat(str1, str2);
+       nodeData.destLatDeg = atof(str1);
+     }
+     {
+       sprintf(str1, "%c", (char) buf[3]);
+       sprintf(str2, "%c", (char) buf[4]);
+       sprintf(str3, "%c", (char) buf[5]);
+       sprintf(str4, "%c", (char) buf[6]);
+       sprintf(str5, "%c", (char) buf[7]);
+       strcat(str1, str2);
+       strcat(str1, str3);
+       strcat(str1, str4);
+       strcat(str1, str5);
+       nodeData.destLatMin = atof(str1);
+     }
+     {
+       sprintf(str1, "%c", (char) buf[12]);
+       sprintf(str2, "%c", (char) buf[13]);
+       sprintf(str3, "%c", (char) buf[14]);
+       strcat(str1, str2);
+       strcat(str1, str3);
+       nodeData.destLongDeg = atof(str1);
+     }
+     {
+       sprintf(str1, "%c", (char) buf[15]);
+       sprintf(str2, "%c", (char) buf[16]);
+       sprintf(str3, "%c", (char) buf[17]);
+       sprintf(str4, "%c", (char) buf[18]);
+       sprintf(str5, "%c", (char) buf[19]);
+       strcat(str1, str2);
+       strcat(str1, str3);
+       strcat(str1, str4);
+       strcat(str1, str5);
+       nodeData.destLongMin = atof(str1);
+     }
+   }
 
-    //    Uncomment for debugging
-    //    Serial.println(nodeData.destLatDeg);
-    //    Serial.println(nodeData.destLatMin);
-    //    Serial.println(nodeData.destLongDeg);
-    //    Serial.println(nodeData.destLongMin);
-  } //End of outer if-statement
+   //    Uncomment for debugging
+   //    Serial.println(nodeData.destLatDeg);
+   //    Serial.println(nodeData.destLatMin);
+   //    Serial.println(nodeData.destLongDeg);
+   //    Serial.println(nodeData.destLongMin);
+ } //End of outer if-statement
 }
 
 bool InitGPSModule(void) {
-  char c = GPS.read();
+ char c = GPS.read();
 
-  if (GPS.newNMEAreceived()) {
-    if (!GPS.parse(GPS.lastNMEA()))
-      return false;
-  }
+ if (GPS.newNMEAreceived()) {
+   if (!GPS.parse(GPS.lastNMEA()))
+     return false;
+ }
 
-  if (timer > millis())  timer = millis();
+ if (timer > millis())  timer = millis();
 
-  if (!GPS.fix)
-    return false;
-  return true;
+ if (!GPS.fix)
+   return false;
+ return true;
 }
 
 void GetGPSData(void) {
-  char c = GPS.read();
+ char c = GPS.read();
 
-  if (GPS.newNMEAreceived()) {
-    if (!GPS.parse(GPS.lastNMEA()))
-      return;
-  }
+ if (GPS.newNMEAreceived()) {
+   if (!GPS.parse(GPS.lastNMEA()))
+     return;
+ }
 
-  if (timer > millis())  timer = millis();
+ if (timer > millis())  timer = millis();
 
-  if (GPS.fix) {
-    Serial.print(GPS.latitude); Serial.print(GPS.lat);
-    Serial.print(", ");
-    Serial.print(GPS.longitude); Serial.println(GPS.lon);
-  }
+ if (GPS.fix) {
+   Serial.print(GPS.latitude); Serial.print(GPS.lat);
+   Serial.print(", ");
+   Serial.print(GPS.longitude); Serial.println(GPS.lon);
+ }
 }
 
 long GetPingDistance(void) {
-  long duration;
+ long duration;
 
-  // The PING))) is triggered by a HIGH pulse of 2 or more microseconds.
-  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-  pinMode(PING_SENSOR, OUTPUT);
-  digitalWrite(PING_SENSOR, LOW);
-  delayMicroseconds(2);
-  digitalWrite(PING_SENSOR, HIGH);
-  delayMicroseconds(5);
-  digitalWrite(PING_SENSOR, LOW);
+ // The PING))) is triggered by a HIGH pulse of 2 or more microseconds.
+ // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+ pinMode(PING_SENSOR, OUTPUT);
+ digitalWrite(PING_SENSOR, LOW);
+ delayMicroseconds(2);
+ digitalWrite(PING_SENSOR, HIGH);
+ delayMicroseconds(5);
+ digitalWrite(PING_SENSOR, LOW);
 
-  // The same pin is used to read the signal from the PING))): a HIGH
-  // pulse whose duration is the time (in microseconds) from the sending
-  // of the ping to the reception of its echo off of an object.
-  pinMode(PING_SENSOR, INPUT);
-  duration = pulseIn(PING_SENSOR, HIGH);
+ // The same pin is used to read the signal from the PING))): a HIGH
+ // pulse whose duration is the time (in microseconds) from the sending
+ // of the ping to the reception of its echo off of an object.
+ pinMode(PING_SENSOR, INPUT);
+ duration = pulseIn(PING_SENSOR, HIGH);
 
-  //Return distance in centimeters
-  return (duration / 29 / 2);
+ //Return distance in centimeters
+ return (duration / 29 / 2);
 }
+*/
