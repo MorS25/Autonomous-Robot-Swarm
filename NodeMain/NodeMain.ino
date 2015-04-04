@@ -146,9 +146,6 @@ void loop(void) {
       vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
       vw_wait_tx();
 
-      //Serial.println(nodeData.pastMoves);
-      nodeData.nodeState = TEST;
-
       //Start by searching for empty char
       for (int i = 1; i < 20; i++) {
         if (nodeData.pastMoves[i] == ' ') {
@@ -179,6 +176,8 @@ void loop(void) {
         delay(nodeData.moveTimes[returnMoveIndex]);
         motor.DriveStop();
       }
+      
+      nodeData.nodeState = USER_CONTROL;
       break;
 
       //    case PC_DATA_PARSE:
