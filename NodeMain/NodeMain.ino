@@ -142,10 +142,11 @@ void loop(void) {
       break;
 
     case USER_CONTROL_RETURN:
-      vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
-      vw_wait_tx();
-      vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
-      vw_wait_tx();
+      //Debugging
+      //      vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
+      //      vw_wait_tx();
+      //      vw_send((uint8_t *)nodeData.pastMoves, strlen(nodeData.pastMoves));
+      //      vw_wait_tx();
 
       //Start by searching for empty char
       for (int i = 1; i < 20; i++) {
