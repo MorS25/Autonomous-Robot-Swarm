@@ -130,6 +130,7 @@ void loop(void) {
             motor.DriveStop();
             break;
           case 'e':
+            //Data Collection
             break;
           case 'r':
             ResetUserControlTimer();
@@ -151,6 +152,7 @@ void loop(void) {
         if (nodeData.pastMoves[i] == ' ') {
           returnMoveIndex = i - 1;
           i = 20;  //Exit out of for loop
+          //Did not use 'break' to not break out of switch-case statement
         }
       }
 
@@ -176,7 +178,7 @@ void loop(void) {
         delay(nodeData.moveTimes[returnMoveIndex]);
         motor.DriveStop();
       }
-      
+
       nodeData.nodeState = USER_CONTROL;
       break;
 
